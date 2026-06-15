@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>CampusLife Hub | Smart Student Portal</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #f1f5f9;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
+      color: #0a2b3e;
+      line-height: 1.4;
+    }
+
+    /* navigation */
+    .navbar {
+      background: white;
+      backdrop-filter: blur(0px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.05);
+      padding: 1rem 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo h1 {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(130deg, #0f3b4f, #1f6e93);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+    .list-item:hover {
+  background: #e2edf4;
+  cursor: default;
+}
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 40px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: #2c5c74;
+    }
+
+    .nav-btn.active {
+      background: #1e5a7a;
+      color: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-btn:hover:not(.active) {
+      background: #e2edf4;
+    }
+
+    .search-wrapper {
+      min-width: 200px;
+      flex: 0.8;
+      max-width: 320px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.6rem 1rem;
+      border-radius: 60px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      font-size: 0.9rem;
+      outline: none;
+      transition: 0.2s;
+    }
+
+    .search-input:focus {
+      border-color: #1e6f9f;
+      box-shadow: 0 0 0 3px rgba(30, 111, 159, 0.2);
+    }
+
+    /* container */
+    .container {
+      max-width: 1300px;
+      margin: 2rem auto;
+      padding: 0 1.8rem 3rem;
+    }
+
+    /* pages */
+    .page {
+      display: none;
+      animation: fadeSlide 0.22s ease-out;
+    }
+
+    .active-page {
+      display: block;
+    }
+
+    @keyframes fadeSlide {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 1.8rem;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+    }
+
+    /* tags bar */
+    .tags-bar {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .tag-btn {
+      background: #eef2f8;
+      border: none;
+      padding: 0.5rem 1.3rem;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      color: #1a4b66;
+    }
+
+    .tag-btn.active-tag {
+      background: #1e5a7a;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    /* grid cards */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.8rem;
+    }
+
+    .service-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.3rem 1.2rem 1.2rem 1.2rem;
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      box-shadow: 0 8px 14px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e2edf2;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .service-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 20px 28px -12px rgba(0, 32, 64, 0.18);
+      border-color: #cbdde6;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.8rem;
+    }
+
+    .card-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #0f3b4f;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: 0.1s;
+      padding: 0 0.2rem;
+      line-height: 1;
+    }
+
+    .star-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .card-desc {
+      color: #4a6272;
+      font-size: 0.9rem;
+      margin: 0.5rem 0 1rem;
+      line-height: 1.4;
+      flex-grow: 1;
+    }
+
+    .card-tag {
+      display: inline-block;
+      background: #eef2fa;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.2rem 0.7rem;
+      border-radius: 50px;
+      margin-bottom: 0.9rem;
+      width: fit-content;
+      color: #1f6e93;
+    }
+
+    .card-link {
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #1f6e93;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: 0.2s;
+      cursor: pointer;
+    }
+
+    .card-link:hover {
+      color: #0b4b6b;
+      text-decoration: underline;
+    }
+
+    /* empty state */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      background: #f8fafc;
+      border-radius: 2rem;
+      color: #5f7f92;
+      font-weight: 500;
+      border: 1px dashed #cbdde6;
+    }
+
+    /* favorites batch section */
+    .batch-actions {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .remove-batch-btn {
+      background: #e3342f;
+      color: white;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .remove-batch-btn:hover {
+      background: #c52827;
+      transform: scale(0.98);
+    }
+
+    .checkbox-select {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+    }
+
+    .fav-checkbox-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    hr {
+      margin: 0.5rem 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.8rem;
+      color: #7d9ab0;
+    }
+
+    /* ===== MODALE POPUP ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-box {
+      background: white;
+      border-radius: 1.4rem;
+      width: 100%;
+      max-width: 720px;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.8rem;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      border: none;
+      background: #f1f5f9;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+    .modal-close:hover {
+      background: #dee2e8;
+    }
+    .modal-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.4rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #e2edf2;
+    }
+    .modal-content-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      padding: 0.7rem 0.9rem;
+      background: #f8fafc;
+      border-radius: 0.8rem;
+    }
+    .item-icon {
+      font-size: 1.6rem;
+      width: 36px;
+      text-align: center;
+    }
+    .item-price {
+      margin-left: auto;
+      background-color: #1e5a7a;
+      color: white;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 680px) {
+      .navbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .search-wrapper {
+        max-width: 100%;
+      }
+      .container {
+        padding: 0 1rem 2rem;
+      }
+      .service-card {
+        padding: 1rem;
+      }
+      .modal-box {
+        padding: 1.2rem;
+      }
+    }
+    body.dark {
+  background: #121826;
+  color: #e2e8f0;
+}
+body.dark .navbar,
+body.dark .service-card,
+body.dark .modal-box {
+  background: #1e293b;
+}
+body.dark .list-item {
+  background: #273444;
+}
+body.dark .list-item:hover {
+  background: #334155;
+}
+body.dark .empty-state {
+  background: #1e293b;
+  border-color: #334155;
+}
+  </style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="logo"><h1>📘 CampusLife Hub</h1></div>
+  <div class="nav-links">
+    <button class="nav-btn" data-page="home">🏠 Home</button>
+    <button class="nav-btn" data-page="categories">🏷️ Service Categories</button>
+    <button class="nav-btn" data-page="favorites">⭐ My Favorites</button>
+  </div>
+  <div class="search-wrapper">
+    <input type="text" id="globalSearch" class="search-input" placeholder="🔍 Search services... (name or description)" autocomplete="off">
+  </div>
+</div>
+
+<div class="container">
+  <!-- HOME PAGE -->
+   <p style="margin-top:0.5rem; color:#4a6272;">Accédez rapidement à tous les services du campus en un clic !</p>
+  <div id="homePage" class="page">
+    <div class="section-header">
+      <h2>✨ Essential Campus Services</h2>
+    </div>
+    <div id="homeCardsGrid" class="cards-grid"></div>
+  </div>
+
+  <!-- SERVICE CATEGORIES PAGE -->
+  <div id="categoriesPage" class="page">
+    <div class="section-header">
+      <h2>📂 Browse by Category</h2>
+    </div>
+    <div id="tagsFilterContainer" class="tags-bar">
+      <button class="tag-btn active-tag" data-tag="All">All</button>
+      <button class="tag-btn" data-tag="Academic">📖 Academic</button>
+      <button class="tag-btn" data-tag="Life">🌿 Life</button>
+      <button class="tag-btn" data-tag="Administrative">📋 Administrative</button>
+    </div>
+    <div id="categoryCardsGrid" class="cards-grid"></div>
+  </div>
+
+  <!-- MY FAVORITES PAGE (batch removal supported) -->
+   <p id="favCount">Services enregistrés : 0</p>
+   <button class="nav-btn" id="themeBtn">🌓 Theme</button>
+  <div id="favoritesPage" class="page">
+    <div class="section-header">
+      <h2>❤️ Your Saved Services</h2>
+    </div>
+    <div class="batch-actions">
+      <button id="batchRemoveBtn" class="remove-batch-btn">🗑️ Remove Selected</button>
+    </div>
+    <div id="favoritesGrid" class="cards-grid"></div>
+  </div>
+  <footer>⚡ Integrated campus portal • Stars persist • Batch removal ready</footer>
+</div>
+
+<!-- MODALE CONTENU SERVICE -->
+<div class="modal-overlay" id="serviceModal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalCloseBtn">✕</button>
+    <h3 class="modal-title" id="modalTitle"></h3>
+    <div id="modalContent" class="modal-content-list"></div>
+  </div>
+</div>
+
+<script>
+  // ---------- SERVICE DATA (TOUS LIENS PASSENT EN MODALE INTERNE) ----------
+  const SERVICES = [
+    { id: 1, name: "📅 Course Schedule", description: "View class timetables, register for sections, and plan your semester.", tag: "Academic", url: "modal", external: false },
+    { id: 2, name: "📊 Grades Entry", description: "Check final grades, midterm results, and academic transcripts.", tag: "Academic", url: "modal", external: false },
+    { id: 3, name: "📚 Library Reservation", description: "Book study rooms, reserve books, and access e-resources.", tag: "Life", url: "modal", external: false },
+    { id: 4, name: "🍽️ Dining Menu", description: "Daily campus dining hall menus, nutritional info & meal plans.", tag: "Life", url: "modal", external: false },
+    { id: 5, name: "🗓️ Academic Calendar", description: "Key deadlines, registration dates, exam schedule and holidays.", tag: "Academic", url: "modal", external: false },
+    { id: 6, name: "🚌 Campus Shuttle", description: "Real-time shuttle tracker, routes, and schedules.", tag: "Life", url: "modal", external: false },
+    { id: 7, name: "📄 Registrar Forms", description: "Request transcripts, enrollment verification, and petitions.", tag: "Administrative", url: "modal", external: false },
+    { id: 8, name: "💳 Financial Aid Hub", description: "Apply for aid, check scholarship status & billing.", tag: "Administrative", url: "modal", external: false },
+    { id: 9, name: "🖥️ IT Support Desk", description: "Tech support, Wi-Fi setup, software downloads.", tag: "Administrative", url: "modal", external: false }
+  ];
+
+  // ===== CONTENU DÉTAILLÉ POUR CHAQUE MODALE + PRIX POUR DINING MENU =====
+  const MODAL_CONTENTS = {
+    "🍽️ Dining Menu": [
+      {icon:"🍕", text:"Pizza margherita + salade verte", price:"4.50 €"},
+      {icon:"🍝", text:"Spaghetti bolognaise", price:"3.80 €"},
+      {icon:"🥩", text:"Steak frites haricots verts", price:"6.90 €"},
+      {icon:"🍣", text:"Assortiment sushi 12 pièces", price:"7.20 €"},
+      {icon:"🥗", text:"Salade poulet croutons fromage", price:"3.20 €"},
+      {icon:"🍔", text:"Burger boeuf frites sauce barbecue", price:"5.10 €"},
+      {icon:"🍜", text:"Soupe ramen porc légumes", price:"4.20 €"},
+      {icon:"🌮", text:"3 tacos poulet guacamole", price:"4.80 €"},
+      {icon:"🥘", text:"Curry légumes riz basmati", price:"3.50 €"},
+      {icon:"🍰", text:"Tiramisu + compote de fruits", price:"2.60 €"}
+    ],
+    "📅 Course Schedule": [
+      {icon:"📖", text:"Mathématiques L1 | Lundi 8h-10h | Amphi A"},
+      {icon:"💻", text:"Informatique | Lundi 14h-16h | Salle 203"},
+      {icon:"📐", text:"Physique | Mardi 10h-12h | Amphi B"},
+      {icon:"📝", text:"TD Anglais | Mardi 16h-18h | Salle 112"},
+      {icon:"⚗️", text:"Chimie TP | Mercredi 8h-11h | Labo 3"},
+      {icon:"📊", text:"Statistiques | Jeudi 9h-11h | Amphi A"},
+      {icon:"🗣️", text:"Conférence métier | Jeudi 14h-16h"},
+      {icon:"🏃", text:"Sport Universitaire | Vendredi 10h-12h"},
+      {icon:"📚", text:"Bibliothèque travail autonome | Vendredi après-midi"},
+      {icon:"✏️", text:"Rattrapage exercices | Samedi matin 9h-11h"}
+    ],
+    "📊 Grades Entry": [
+      {icon:"📈", text:"Mathématiques : 14.5 / 20 (Validé)"},
+      {icon:"💻", text:"Informatique : 16.2 / 20 (Validé)"},
+      {icon:"📐", text:"Physique : 11.0 / 20 (Validé)"},
+      {icon:"🌐", text:"Anglais : 15.8 / 20 (Validé)"},
+      {icon:"⚗️", text:"Chimie : 9.2 / 20 (Session rattrapage)"},
+      {icon:"📊", text:"Statistiques : 13.7 / 20 (Validé)"},
+      {icon:"📄", text:"Note partielle 1 : 12.8 moyenne générale"},
+      {icon:"📄", text:"Note partielle 2 : 14.1 moyenne générale"},
+      {icon:"🏅", text:"Moyenne semestre : 13.4 / 20"},
+      {icon:"📜", text:"Relevé de notes téléchargeable PDF"}
+    ],
+    "📚 Library Reservation": [
+      {icon:"🏠", text:"Salle travail individuelle n°4 (9h-12h)"},
+      {icon:"👥", text:"Salle groupe 6 personnes B2 (14h-17h)"},
+      {icon:"📕", text:"Livre : Algorithmique et structures de données"},
+      {icon:"📗", text:"Livre : Calcul différentiel L1"},
+      {icon:"💿", text:"Accès base de données scientifique Elsevier"},
+      {icon:"📱", text:"Emprunt tablette numérique 7 jours"},
+      {icon:"🖨️", text:"Réservation imprimante couleur bibliothèque"},
+      {icon:"📡", text:"Accès Wi-Fi bibliothèque étage 2"},
+      {icon:"📖", text:"Consultation archives mémoire master"},
+      {icon:"⏰", text:"Prolongation emprunt livre de 15 jours"}
+    ],
+    "🗓️ Academic Calendar": [
+      {icon:"📆", text:"01 Septembre : Début des cours semestre automne"},
+      {icon:"📝", text:"15 Septembre : Fin des inscriptions aux modules"},
+      {icon:"⚠️", text:"20 Octobre : Date limite dépôt demandes d'aménagement"},
+      {icon:"📖", text:"18 Novembre : Début des révisions examens partiels"},
+      {icon:"✍️", text:"02 Décembre : Début période examens semestre 1"},
+      {icon:"🏖️", text:"20 Décembre : Début vacances Noël"},
+      {icon:"📅", text:"05 Janvier : Reprise des cours"},
+      {icon:"💰", text:"10 Février : Date limite paiement frais scolarité"},
+      {icon:"📚", text:"15 Mars : Choix des modules semestre suivant"},
+      {icon:"🎉", text:"30 Juin : Fin année universitaire"}
+    ],
+    "🚌 Campus Shuttle": [
+      {icon:"🚏", text:"Ligne A : Résidence Est ↔ Bâtiment Sciences (toutes les 10min)"},
+      {icon:"🚏", text:"Ligne B : Parking Sud ↔ Bibliothèque Centrale"},
+      {icon:"🚏", text:"Ligne C : Résidence Ouest ↔ Resto Universitaire"},
+      {icon:"🕒", text:"Horaires semaine : 06:45 → 22:30"},
+      {icon:"🕒", text:"Samedi : 08:00 → 19:00 (toutes les 20min)"},
+      {icon:"🕒", text:"Dimanche & jours fériés : service réduit 1 bus/h"},
+      {icon:"📍", text:"Arrêt principal : Place de l'Université (toutes lignes passent)"},
+      {icon:"📱", text:"Tracking temps réel disponible sur l'app campus"},
+      {icon:"♿", text:"Tous les bus accessibles PMR, rampes intégrées"},
+      {icon:"💶", text:"Gratuit pour étudiants avec carte étudiante valide"}
+    ],
+    "📄 Registrar Forms": [
+      {icon:"📜", text:"Demande relevé de notes officiel (transcript)"},
+      {icon:"✅", text:"Certificat de scolarité / attestation d'inscription"},
+      {icon:"📝", text:"Demande changement de filière / spécialité"},
+      {icon:"📄", text:"Demande validation crédits ECTS échange ERASMUS"},
+      {icon:"🗓️", text:"Demande report d'examen pour motif médical"},
+      {icon:"📋", text:"Formulaire annulation inscription semestre"},
+      {icon:"🏫", text:"Attestation de diplomation provisoire"},
+      {icon:"✉️", text:"Demande duplicata carte étudiante perdue"},
+      {icon:"📂", text:"Demande consultation dossier étudiant administratif"},
+      {icon:"⚖️", text:"Recours contre décision jury d'examen"}
+    ],
+    "💳 Financial Aid Hub": [
+      {icon:"💸", text:"Demande bourse sur critères sociaux (BCS)"},
+      {icon:"🎓", text:"Bourse mérite pour étudiants à haut classement"},
+      {icon:"🏠", text:"Aide logement étudiant APL"},
+      {icon:"💳", text:"Échelonnement paiement frais scolarité en 3 fois"},
+      {icon:"💵", text:"Aide alimentaire urgente (resto U gratuit)"},
+      {icon:"📊", text:"Suivi en temps réel traitement dossier bourse"},
+      {icon:"🧾", text:"Télécharger avis de versement mensuel bourse"},
+      {icon:"🏦", text:"Demande prêt étudiant taux réduit banque partenaire"},
+      {icon:"📩", text:"Réclamation retard virement aide financière"},
+      {icon:"💼", text:"Aides stage rémunéré pour étudiants précaires"}
+    ],
+    "🖥️ IT Support Desk": [
+      {icon:"📶", text:"Activation connexion Wi-Fi campus eduroam"},
+      {icon:"💻", text:"Installation pack Office 365 étudiant gratuit"},
+      {icon:"🔑", text:"Réinitialisation mot de passe compte universitaire"},
+      {icon:"🖨️", text:"Accès imprimantes campus & crédits impression"},
+      {icon:"📧", text:"Configuration mail étudiant sur téléphone/ordinateur"},
+      {icon:"🛠️", text:"Dépannage matériel ordinateur portable étudiant"},
+      {icon:"☁️", text:"Stockage cloud 1To OneDrive offert aux inscrits"},
+      {icon:"🔒", text:"Aide connexion VPN accès ressources bibliothèque distante"},
+      {icon:"📱", text:"Installation application mobile services campus"},
+      {icon:"🎓", text:"Formation logiciels statistiques (SPSS, R, Python) gratuite"}
+    ]
+  };
+
+  // MODALE GESTION
+  const modalOverlay = document.getElementById("serviceModal");
+  const modalTitleEl = document.getElementById("modalTitle");
+  const modalContentEl = document.getElementById("modalContent");
+  const modalCloseBtn = document.getElementById("modalCloseBtn");
+
+  function openServiceModal(serviceName) {
+    const items = MODAL_CONTENTS[serviceName];
+    if (!items) return;
+    modalTitleEl.textContent = serviceName;
+    // Générer ligne avec prix si existant
+    modalContentEl.innerHTML = items.map(item => {
+      let priceHtml = item.price ? `<span class="item-price">${item.price}</span>` : "";
+      return `
+        <div class="list-item">
+          <span class="item-icon">${item.icon}</span>
+          <span>${item.text}</span>
+          ${priceHtml}
+        </div>
+      `;
+    }).join("");
+    modalOverlay.style.display = "flex";
+  }
+  function closeServiceModal() {
+    modalOverlay.style.display = "none";
+  }
+  modalCloseBtn.addEventListener("click", closeServiceModal);
+  modalOverlay.addEventListener("click", (e)=>{
+    if(e.target === modalOverlay) closeServiceModal();
+  });
+
+  // ---------- STORAGE KEYS ----------
+  const FAV_KEY = "campus_favorites";
+
+  // load favorites from localStorage (array of service ids)
+  let favoritesIds = JSON.parse(localStorage.getItem(FAV_KEY)) || [];
+
+  // helper: save favorites to localStorage
+  function persistFavorites() {
+    localStorage.setItem(FAV_KEY, JSON.stringify(favoritesIds));
+  }
+
+  // favorite helpers
+  function isFavorite(id) {
+    return favoritesIds.includes(id);
+  }
+
+  // toggle with confirm prompt (alert/confirm based on requirement)
+  function toggleFavoriteWithConfirm(serviceId, serviceName) {
+    const alreadyFav = isFavorite(serviceId);
+    let userConfirmed = false;
+    if (!alreadyFav) {
+      userConfirmed = confirm(`✨ Add "${serviceName}" to your favorites?`);
+      if (userConfirmed) {
+        if (!favoritesIds.includes(serviceId)) {
+          favoritesIds.push(serviceId);
+          persistFavorites();
+        }
+      }
+    } else {
+      userConfirmed = confirm(`❌ Remove "${serviceName}" from favorites?`);
+      if (userConfirmed) {
+        favoritesIds = favoritesIds.filter(id => id !== serviceId);
+        persistFavorites();
+      }
+    }
+    if (userConfirmed) {
+      // re-render current page to reflect star changes
+      refreshCurrentPage();
+    }
+    return userConfirmed;
+  }
+
+  // batch removal: multi-select deletion (advanced requirement)
+  function batchRemoveFavorites(selectedIds) {
+    if (selectedIds.length === 0) {
+      alert("No services selected.");
+      return false;
+    }
+    const confirmMsg = `⚠️ Permanently remove ${selectedIds.length} favorite(s)? This action cannot be undone.`;
+    if (confirm(confirmMsg)) {
+      favoritesIds = favoritesIds.filter(id => !selectedIds.includes(id));
+      persistFavorites();
+      refreshCurrentPage();
+      return true;
+    }
+    return false;
+  }
+
+  // ---------- GLOBAL SEARCH & PAGE STATE ----------
+  let currentPage = "home";          // home, categories, favorites
+  let activeTag = "All";             // for categories page
+  let searchQuery = "";
+
+  const searchInput = document.getElementById("globalSearch");
+
+  // render functions based on search, tag, etc.
+  function filterServicesBySearch(services) {
+    if (!searchQuery.trim()) return services;
+    const q = searchQuery.trim().toLowerCase();
+    return services.filter(service => 
+      service.name.toLowerCase().includes(q) || 
+      service.description.toLowerCase().includes(q)
+    );
+  }
+
+  // get filtered list for home page (all services + search)
+  function getFilteredHomeServices() {
+    return filterServicesBySearch([...SERVICES]);
+  }
+
+  // get filtered list for categories page (tag + search)
+  function getFilteredCategoryServices() {
+    let filtered = [...SERVICES];
+    if (activeTag !== "All") {
+      filtered = filtered.filter(s => s.tag === activeTag);
+    }
+    return filterServicesBySearch(filtered);
+  }
+
+  // generate card HTML (reusable)
+  function generateCardHTML(service, showCheckbox = false, isChecked = false) {
+    const starIcon = isFavorite(service.id) ? "★" : "☆";
+    const starColor = isFavorite(service.id) ? "#f5b042" : "#9aaebf";
+    const checkboxHtml = showCheckbox ? `<input type="checkbox" class="checkbox-select" data-id="${service.id}" ${isChecked ? "checked" : ""}>` : "";
+    
+    // Tous les liens ouvrent la modale interne maintenant
+    let linkHtml = `<span class="card-link open-modal-link" data-service-name="${service.name}">🔗 Open official service →</span>`;
+
+    return `
+      <div class="service-card" data-service-id="${service.id}">
+        <div class="card-header">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            ${showCheckbox ? checkboxHtml : ""}
+            <span class="card-title">${service.name}</span>
+          </div>
+          <button class="star-btn" data-id="${service.id}" data-name="${service.name.replace(/'/g, "\\'")}" style="color: ${starColor};">${starIcon}</button>
+        </div>
+        <div class="card-tag">🏷️ ${service.tag}</div>
+        <div class="card-desc">${service.description}</div>
+        ${linkHtml}
+      </div>
+    `;
+  }
+
+  // Render HOME page (cards with star and hover, external link)
+  function renderHome() {
+    const container = document.getElementById("homeCardsGrid");
+    const servicesList = getFilteredHomeServices();
+    if (servicesList.length === 0) {
+      container.innerHTML = `<div class="empty-state">🔍 No services match "${searchQuery}". Try another keyword.</div>`;
+      return;
+    }
+    container.innerHTML = servicesList.map(service => generateCardHTML(service, false)).join("");
+    attachStarEvents();
+    attachModalLinkEvents();
+  }
+
+  // Render CATEGORIES page (based on tag filter + search)
+  function renderCategories() {
+    const container = document.getElementById("categoryCardsGrid");
+    const filtered = getFilteredCategoryServices();
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="empty-state">🏷️ No results for ${activeTag !== "All" ? activeTag + " + " : ""}"${searchQuery}".<br>Clear filters to see more.</div>`;
+      return;
+    }
+    container.innerHTML = filtered.map(service => generateCardHTML(service, false)).join("");
+    attachStarEvents();
+    attachModalLinkEvents();
+  }
+
+  // Render FAVORITES page with checkboxes + batch removal support
+  function renderFavorites() {
+    const container = document.getElementById("favoritesGrid");
+    const favoriteServices = SERVICES.filter(svc => favoritesIds.includes(svc.id));
+    if (favoriteServices.length === 0) {
+      container.innerHTML = `<div class="empty-state">⭐ No favorites added yet. Go to Home or Categories and click the star ☆ to save services.</div>`;
+      return;
+    }
+    // generate cards with checkbox for each
+    container.innerHTML = favoriteServices.map(service => generateCardHTML(service, true, false)).join("");
+    attachStarEvents();
+    attachModalLinkEvents();
+    attachCheckboxEventsForBatch();
+  }
+
+  // Lien ouverture modale
+  function attachModalLinkEvents() {
+    document.querySelectorAll(".open-modal-link").forEach(el=>{
+      el.onclick = ()=>{
+        const name = el.getAttribute("data-service-name");
+        openServiceModal(name);
+      }
+    })
+  }
+
+  // global star events (toggle favorites)
+  function attachStarEvents() {
+    document.querySelectorAll(".star-btn").forEach(btn => {
+      btn.removeEventListener("click", starClickHandler);
+      btn.addEventListener("click", starClickHandler);
+    });
+  }
+
+  function starClickHandler(e) {
+    e.stopPropagation();
+    const id = parseInt(this.getAttribute("data-id"));
+    const name = this.getAttribute("data-name");
+    toggleFavoriteWithConfirm(id, name);
+  }
+
+  // for batch removal: update checkboxes selection state
+  let selectedFavIdsForRemoval = new Set();
+
+  function attachCheckboxEventsForBatch() {
+    const checkboxes = document.querySelectorAll("#favoritesGrid .checkbox-select");
+    checkboxes.forEach(cb => {
+      cb.removeEventListener("change", checkboxChangeHandler);
+      cb.addEventListener("change", checkboxChangeHandler);
+    });
+    // sync set with initial checked states
+    selectedFavIdsForRemoval.clear();
+    checkboxes.forEach(cb => {
+      const id = parseInt(cb.getAttribute("data-id"));
+      if (cb.checked) selectedFavIdsForRemoval.add(id);
+    });
+  }
+
+  function checkboxChangeHandler(e) {
+    const id = parseInt(e.target.getAttribute("data-id"));
+    if (e.target.checked) {
+      selectedFavIdsForRemoval.add(id);
+    } else {
+      selectedFavIdsForRemoval.delete(id);
+    }
+  }
+
+  // batch removal button logic
+  function setupBatchRemoval() {
+    const batchBtn = document.getElementById("batchRemoveBtn");
+    if (batchBtn) {
+      batchBtn.replaceWith(batchBtn.cloneNode(true));
+      const newBtn = document.getElementById("batchRemoveBtn");
+      newBtn.addEventListener("click", () => {
+        if (selectedFavIdsForRemoval.size === 0) {
+          alert("Please select at least one favorite to remove.");
+          return;
+        }
+        const idsToRemove = Array.from(selectedFavIdsForRemoval);
+        batchRemoveFavorites(idsToRemove);
+        selectedFavIdsForRemoval.clear();
+      });
+    }
+  }
+
+  // ---------- PAGE NAVIGATION SMOOTH ----------
+  function showPage(pageId) {
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active-page");
+    });
+    document.getElementById(`${pageId}Page`).classList.add("active-page");
+    
+    // update active nav style
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      if (btn.getAttribute("data-page") === pageId) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+    
+    currentPage = pageId;
+    refreshCurrentPage();
+  }
+
+  function refreshCurrentPage() {
+    if (currentPage === "home") {
+      renderHome();
+    } else if (currentPage === "categories") {
+      renderCategories();
+      highlightActiveTag();
+    } else if (currentPage === "favorites") {
+      renderFavorites();
+      setupBatchRemoval();
+    }
+  }
+
+  // highlight current tag in categories view
+  function highlightActiveTag() {
+    document.querySelectorAll(".tag-btn").forEach(btn => {
+      const tagVal = btn.getAttribute("data-tag");
+      if (tagVal === activeTag) {
+        btn.classList.add("active-tag");
+      } else {
+        btn.classList.remove("active-tag");
+      }
+    });
+  }
+
+  // tag event listeners
+  function initTagFilters() {
+    const tagBtns = document.querySelectorAll(".tag-btn");
+    tagBtns.forEach(btn => {
+      btn.addEventListener("click", (e) => {
+        const tag = btn.getAttribute("data-tag");
+        activeTag = tag;
+        refreshCurrentPage();
+      });
+    });
+  }
+
+  // search realtime listener
+  function initSearch() {
+    searchInput.addEventListener("input", (e) => {
+      searchQuery = e.target.value;
+      if (currentPage === "home") renderHome();
+      else if (currentPage === "categories") renderCategories();
+      else if (currentPage === "favorites") {
+        const favServices = SERVICES.filter(svc => favoritesIds.includes(svc.id));
+        const filteredFavs = favServices.filter(svc => 
+          svc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          svc.description.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        const container = document.getElementById("favoritesGrid");
+        if (filteredFavs.length === 0 && favoritesIds.length > 0) {
+          container.innerHTML = `<div class="empty-state">🔎 No favorite matches "${searchQuery}".</div>`;
+        } else if (filteredFavs.length === 0 && favoritesIds.length === 0) {
+          container.innerHTML = `<div class="empty-state">⭐ No favorites added yet.</div>`;
+        } else {
+          container.innerHTML = filteredFavs.map(service => generateCardHTML(service, true, false)).join("");
+          attachStarEvents();
+          attachModalLinkEvents();
+          attachCheckboxEventsForBatch();
+          setupBatchRemoval(); 
+        }
+        return;
+      }
+    });
+  }
+
+  // navigation smooth + localStorage ready
+  function initNavigation() {
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const page = btn.getAttribute("data-page");
+        showPage(page);
+      });
+    });
+  }
+
+  // initial load and storage sync across pages
+  function init() {
+    initNavigation();
+    initTagFilters();
+    initSearch();
+    showPage("home");
+    window.addEventListener("storage", (e) => {
+      if (e.key === FAV_KEY) {
+        favoritesIds = JSON.parse(localStorage.getItem(FAV_KEY)) || [];
+        refreshCurrentPage();
+      }
+    });
+  }
+
+  init();
+  function updateFavCount(){
+  document.getElementById("favCount").textContent = `Services enregistrés : ${favoritesIds.length}`;
+};
+  // update count on load and whenever favorites change
+  updateFavCount();
+  const originalToggleFavoriteWithConfirm = toggleFavoriteWithConfirm;
+  toggleFavoriteWithConfirm = function(serviceId, serviceName) {
+    const result = originalToggleFavoriteWithConfirm(serviceId, serviceName);
+    if (result) {
+      updateFavCount();
+    }
+    return result;
+  };
+</script>
+</body>
+</html>
