@@ -16,6 +16,27 @@
       font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, sans-serif;
       color: #0a2b3e;
       line-height: 1.4;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark {
+      background: #121826;
+      color: #e2e8f0;
+    }
+    body.dark .navbar,
+    body.dark .service-card,
+    body.dark .modal-box,
+    body.dark .reservation-card {
+      background: #1e293b;
+    }
+    body.dark .list-item {
+      background: #273444;
+    }
+    body.dark .list-item:hover {
+      background: #334155;
+    }
+    body.dark .empty-state {
+      background: #1e293b;
+      border-color: #334155;
     }
 
     /* navigation */
@@ -32,6 +53,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
+      transition: background 0.3s;
     }
 
     .logo h1 {
@@ -50,9 +72,9 @@
       flex-wrap: wrap;
     }
     .list-item:hover {
-  background: #e2edf4;
-  cursor: default;
-}
+      background: #e2edf4;
+      cursor: default;
+    }
 
     .nav-btn {
       background: transparent;
@@ -132,6 +154,11 @@
       align-items: baseline;
       flex-wrap: wrap;
       margin-bottom: 1.8rem;
+    }
+    .welcome-text {
+      font-size: 1.1rem;
+      color: #4a6272;
+      margin-bottom: 1rem;
     }
 
     h2 {
@@ -263,6 +290,7 @@
       color: #5f7f92;
       font-weight: 500;
       border: 1px dashed #cbdde6;
+      transition: background 0.3s;
     }
 
     /* favorites batch section */
@@ -332,6 +360,7 @@
       overflow-y: auto;
       padding: 1.8rem;
       position: relative;
+      transition: background 0.3s;
     }
     .modal-close {
       position: absolute;
@@ -352,9 +381,29 @@
     }
     .modal-title {
       font-size: 1.5rem;
-      margin-bottom: 1.4rem;
+      margin-bottom: 1rem;
       padding-bottom: 0.8rem;
       border-bottom: 1px solid #e2edf2;
+    }
+    .modal-filter-bar {
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .modal-search {
+      flex: 1;
+      min-width: 220px;
+      padding: 0.5rem 0.9rem;
+      border-radius: 30px;
+      border: 1px solid #cbd5e1;
+    }
+    .price-filter {
+      padding: 0.5rem;
+      border-radius: 30px;
+      border: 1px solid #cbd5e1;
+      display: none;
     }
     .modal-content-list {
       display: flex;
@@ -368,6 +417,7 @@
       padding: 0.7rem 0.9rem;
       background: #f8fafc;
       border-radius: 0.8rem;
+      transition: transform 0.15s ease;
     }
     .item-icon {
       font-size: 1.6rem;
@@ -382,6 +432,38 @@
       border-radius: 20px;
       font-weight: 600;
       font-size: 0.85rem;
+    }
+    .reserve-btn {
+      margin-left: 10px;
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.7rem;
+      border-radius: 20px;
+      cursor: pointer;
+    }
+    .reserve-btn:hover {
+      background: #15803d;
+    }
+
+    /* Page Mes Réservations */
+    .reservation-card {
+      background: #f8fafc;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+    }
+    .reserve-delete {
+      background: #e3342f;
+      color: white;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 30px;
+      cursor: pointer;
     }
 
     @media (max-width: 680px) {
@@ -401,26 +483,11 @@
       .modal-box {
         padding: 1.2rem;
       }
+      .modal-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
     }
-    body.dark {
-  background: #121826;
-  color: #e2e8f0;
-}
-body.dark .navbar,
-body.dark .service-card,
-body.dark .modal-box {
-  background: #1e293b;
-}
-body.dark .list-item {
-  background: #273444;
-}
-body.dark .list-item:hover {
-  background: #334155;
-}
-body.dark .empty-state {
-  background: #1e293b;
-  border-color: #334155;
-}
   </style>
 </head>
 <body>
@@ -431,6 +498,9 @@ body.dark .empty-state {
     <button class="nav-btn" data-page="home">🏠 Home</button>
     <button class="nav-btn" data-page="categories">🏷️ Service Categories</button>
     <button class="nav-btn" data-page="favorites">⭐ My Favorites</button>
+    <!-- Nouvelle page Mes Réservations -->
+    <button class="nav-btn" data-page="reservations">📅 Mes Réservations</button>
+    <button class="nav-btn" id="themeBtn">🌓 Theme</button>
   </div>
   <div class="search-wrapper">
     <input type="text" id="globalSearch" class="search-input" placeholder="🔍 Search services... (name or description)" autocomplete="off">
@@ -439,11 +509,14 @@ body.dark .empty-state {
 
 <div class="container">
   <!-- HOME PAGE -->
-   <p style="margin-top:0.5rem; color:#4a6272;">Accédez rapidement à tous les services du campus en un clic !</p>
   <div id="homePage" class="page">
     <div class="section-header">
-      <h2>✨ Essential Campus Services</h2>
+      <div>
+        <h2>✨ Essential Campus Services</h2>
+        <p class="welcome-text" id="welcomeMsg"></p>
+      </div>
     </div>
+    <p style="margin-top:0.5rem; color:#4a6272;">Accédez rapidement à tous les services du campus en un clic !</p>
     <div id="homeCardsGrid" class="cards-grid"></div>
   </div>
 
@@ -462,8 +535,7 @@ body.dark .empty-state {
   </div>
 
   <!-- MY FAVORITES PAGE (batch removal supported) -->
-   <p id="favCount">Services enregistrés : 0</p>
-   <button class="nav-btn" id="themeBtn">🌓 Theme</button>
+  <p id="favCount">Services enregistrés : 0</p>
   <div id="favoritesPage" class="page">
     <div class="section-header">
       <h2>❤️ Your Saved Services</h2>
@@ -473,6 +545,15 @@ body.dark .empty-state {
     </div>
     <div id="favoritesGrid" class="cards-grid"></div>
   </div>
+
+  <!-- NOUVELLE PAGE MES RÉSERVATIONS -->
+  <div id="reservationsPage" class="page">
+    <div class="section-header">
+      <h2>📅 Mes Réservations</h2>
+    </div>
+    <div id="reservationsList"></div>
+  </div>
+
   <footer>⚡ Integrated campus portal • Stars persist • Batch removal ready</footer>
 </div>
 
@@ -481,6 +562,16 @@ body.dark .empty-state {
   <div class="modal-box">
     <button class="modal-close" id="modalCloseBtn">✕</button>
     <h3 class="modal-title" id="modalTitle"></h3>
+    <!-- Barre filtre modale -->
+    <div class="modal-filter-bar">
+      <input type="text" class="modal-search" id="modalSearchInput" placeholder="Rechercher un élément...">
+      <select class="price-filter" id="priceFilterSelect">
+        <option value="all">Tous les prix</option>
+        <option value="low">Moins de 4€</option>
+        <option value="mid">4€ à 6€</option>
+        <option value="high">Plus de 6€</option>
+      </select>
+    </div>
     <div id="modalContent" class="modal-content-list"></div>
   </div>
 </div>
@@ -499,141 +590,207 @@ body.dark .empty-state {
     { id: 9, name: "🖥️ IT Support Desk", description: "Tech support, Wi-Fi setup, software downloads.", tag: "Administrative", url: "modal", external: false }
   ];
 
-  // ===== CONTENU DÉTAILLÉ POUR CHAQUE MODALE + PRIX POUR DINING MENU =====
+  // ===== CONTENU DÉTAILLÉ POUR CHAQUE MODALE + PRIX + possibilité réservation =====
   const MODAL_CONTENTS = {
     "🍽️ Dining Menu": [
-      {icon:"🍕", text:"Pizza margherita + salade verte", price:"4.50 €"},
-      {icon:"🍝", text:"Spaghetti bolognaise", price:"3.80 €"},
-      {icon:"🥩", text:"Steak frites haricots verts", price:"6.90 €"},
-      {icon:"🍣", text:"Assortiment sushi 12 pièces", price:"7.20 €"},
-      {icon:"🥗", text:"Salade poulet croutons fromage", price:"3.20 €"},
-      {icon:"🍔", text:"Burger boeuf frites sauce barbecue", price:"5.10 €"},
-      {icon:"🍜", text:"Soupe ramen porc légumes", price:"4.20 €"},
-      {icon:"🌮", text:"3 tacos poulet guacamole", price:"4.80 €"},
-      {icon:"🥘", text:"Curry légumes riz basmati", price:"3.50 €"},
-      {icon:"🍰", text:"Tiramisu + compote de fruits", price:"2.60 €"}
+      {icon:"🍕", text:"Pizza margherita + salade verte", price:"4.50 €", priceNum:4.5, canReserve:true},
+      {icon:"🍝", text:"Spaghetti bolognaise", price:"3.80 €", priceNum:3.8, canReserve:true},
+      {icon:"🥩", text:"Steak frites haricots verts", price:"6.90 €", priceNum:6.9, canReserve:true},
+      {icon:"🍣", text:"Assortiment sushi 12 pièces", price:"7.20 €", priceNum:7.2, canReserve:true},
+      {icon:"🥗", text:"Salade poulet croutons fromage", price:"3.20 €", priceNum:3.2, canReserve:true},
+      {icon:"🍔", text:"Burger boeuf frites sauce barbecue", price:"5.10 €", priceNum:5.1, canReserve:true},
+      {icon:"🍜", text:"Soupe ramen porc légumes", price:"4.20 €", priceNum:4.2, canReserve:true},
+      {icon:"🌮", text:"3 tacos poulet guacamole", price:"4.80 €", priceNum:4.8, canReserve:true},
+      {icon:"🥘", text:"Curry légumes riz basmati", price:"3.50 €", priceNum:3.5, canReserve:true},
+      {icon:"🍰", text:"Tiramisu + compote de fruits", price:"2.60 €", priceNum:2.6, canReserve:true}
     ],
     "📅 Course Schedule": [
-      {icon:"📖", text:"Mathématiques L1 | Lundi 8h-10h | Amphi A"},
-      {icon:"💻", text:"Informatique | Lundi 14h-16h | Salle 203"},
-      {icon:"📐", text:"Physique | Mardi 10h-12h | Amphi B"},
-      {icon:"📝", text:"TD Anglais | Mardi 16h-18h | Salle 112"},
-      {icon:"⚗️", text:"Chimie TP | Mercredi 8h-11h | Labo 3"},
-      {icon:"📊", text:"Statistiques | Jeudi 9h-11h | Amphi A"},
-      {icon:"🗣️", text:"Conférence métier | Jeudi 14h-16h"},
-      {icon:"🏃", text:"Sport Universitaire | Vendredi 10h-12h"},
-      {icon:"📚", text:"Bibliothèque travail autonome | Vendredi après-midi"},
-      {icon:"✏️", text:"Rattrapage exercices | Samedi matin 9h-11h"}
+      {icon:"📖", text:"Mathématiques L1 | Lundi 8h-10h | Amphi A", canReserve:false},
+      {icon:"💻", text:"Informatique | Lundi 14h-16h | Salle 203", canReserve:false},
+      {icon:"📐", text:"Physique | Mardi 10h-12h | Amphi B", canReserve:false},
+      {icon:"📝", text:"TD Anglais | Mardi 16h-18h | Salle 112", canReserve:false},
+      {icon:"⚗️", text:"Chimie TP | Mercredi 8h-11h | Labo 3", canReserve:false},
+      {icon:"📊", text:"Statistiques | Jeudi 9h-11h | Amphi A", canReserve:false},
+      {icon:"🗣️", text:"Conférence métier | Jeudi 14h-16h", canReserve:false},
+      {icon:"🏃", text:"Sport Universitaire | Vendredi 10h-12h", canReserve:false},
+      {icon:"📚", text:"Bibliothèque travail autonome | Vendredi après-midi", canReserve:false},
+      {icon:"✏️", text:"Rattrapage exercices | Samedi matin 9h-11h", canReserve:false}
     ],
     "📊 Grades Entry": [
-      {icon:"📈", text:"Mathématiques : 14.5 / 20 (Validé)"},
-      {icon:"💻", text:"Informatique : 16.2 / 20 (Validé)"},
-      {icon:"📐", text:"Physique : 11.0 / 20 (Validé)"},
-      {icon:"🌐", text:"Anglais : 15.8 / 20 (Validé)"},
-      {icon:"⚗️", text:"Chimie : 9.2 / 20 (Session rattrapage)"},
-      {icon:"📊", text:"Statistiques : 13.7 / 20 (Validé)"},
-      {icon:"📄", text:"Note partielle 1 : 12.8 moyenne générale"},
-      {icon:"📄", text:"Note partielle 2 : 14.1 moyenne générale"},
-      {icon:"🏅", text:"Moyenne semestre : 13.4 / 20"},
-      {icon:"📜", text:"Relevé de notes téléchargeable PDF"}
+      {icon:"📈", text:"Mathématiques : 14.5 / 20 (Validé)", canReserve:false},
+      {icon:"💻", text:"Informatique : 16.2 / 20 (Validé)", canReserve:false},
+      {icon:"📐", text:"Physique : 11.0 / 20 (Validé)", canReserve:false},
+      {icon:"🌐", text:"Anglais : 15.8 / 20 (Validé)", canReserve:false},
+      {icon:"⚗️", text:"Chimie : 9.2 / 20 (Session rattrapage)", canReserve:false},
+      {icon:"📊", text:"Statistiques : 13.7 / 20 (Validé)", canReserve:false},
+      {icon:"📄", text:"Note partielle 1 : 12.8 moyenne générale", canReserve:false},
+      {icon:"📄", text:"Note partielle 2 : 14.1 moyenne générale", canReserve:false},
+      {icon:"🏅", text:"Moyenne semestre : 13.4 / 20", canReserve:false},
+      {icon:"📜", text:"Relevé de notes téléchargeable PDF", canReserve:false}
     ],
     "📚 Library Reservation": [
-      {icon:"🏠", text:"Salle travail individuelle n°4 (9h-12h)"},
-      {icon:"👥", text:"Salle groupe 6 personnes B2 (14h-17h)"},
-      {icon:"📕", text:"Livre : Algorithmique et structures de données"},
-      {icon:"📗", text:"Livre : Calcul différentiel L1"},
-      {icon:"💿", text:"Accès base de données scientifique Elsevier"},
-      {icon:"📱", text:"Emprunt tablette numérique 7 jours"},
-      {icon:"🖨️", text:"Réservation imprimante couleur bibliothèque"},
-      {icon:"📡", text:"Accès Wi-Fi bibliothèque étage 2"},
-      {icon:"📖", text:"Consultation archives mémoire master"},
-      {icon:"⏰", text:"Prolongation emprunt livre de 15 jours"}
+      {icon:"🏠", text:"Salle travail individuelle n°4 (9h-12h)", canReserve:true},
+      {icon:"👥", text:"Salle groupe 6 personnes B2 (14h-17h)", canReserve:true},
+      {icon:"📕", text:"Livre : Algorithmique et structures de données", canReserve:true},
+      {icon:"📗", text:"Livre : Calcul différentiel L1", canReserve:true},
+      {icon:"💿", text:"Accès base de données scientifique Elsevier", canReserve:false},
+      {icon:"📱", text:"Emprunt tablette numérique 7 jours", canReserve:true},
+      {icon:"🖨️", text:"Réservation imprimante couleur bibliothèque", canReserve:true},
+      {icon:"📡", text:"Accès Wi-Fi bibliothèque étage 2", canReserve:false},
+      {icon:"📖", text:"Consultation archives mémoire master", canReserve:false},
+      {icon:"⏰", text:"Prolongation emprunt livre de 15 jours", canReserve:true}
     ],
     "🗓️ Academic Calendar": [
-      {icon:"📆", text:"01 Septembre : Début des cours semestre automne"},
-      {icon:"📝", text:"15 Septembre : Fin des inscriptions aux modules"},
-      {icon:"⚠️", text:"20 Octobre : Date limite dépôt demandes d'aménagement"},
-      {icon:"📖", text:"18 Novembre : Début des révisions examens partiels"},
-      {icon:"✍️", text:"02 Décembre : Début période examens semestre 1"},
-      {icon:"🏖️", text:"20 Décembre : Début vacances Noël"},
-      {icon:"📅", text:"05 Janvier : Reprise des cours"},
-      {icon:"💰", text:"10 Février : Date limite paiement frais scolarité"},
-      {icon:"📚", text:"15 Mars : Choix des modules semestre suivant"},
-      {icon:"🎉", text:"30 Juin : Fin année universitaire"}
+      {icon:"📆", text:"01 Septembre : Début des cours semestre automne", canReserve:false},
+      {icon:"📝", text:"15 Septembre : Fin des inscriptions aux modules", canReserve:false},
+      {icon:"⚠️", text:"20 Octobre : Date limite dépôt demandes d'aménagement", canReserve:false},
+      {icon:"📖", text:"18 Novembre : Début des révisions examens partiels", canReserve:false},
+      {icon:"✍️", text:"02 Décembre : Début période examens semestre 1", canReserve:false},
+      {icon:"🏖️", text:"20 Décembre : Début vacances Noël", canReserve:false},
+      {icon:"📅", text:"05 Janvier : Reprise des cours", canReserve:false},
+      {icon:"💰", text:"10 Février : Date limite paiement frais scolarité", canReserve:false},
+      {icon:"📚", text:"15 Mars : Choix des modules semestre suivant", canReserve:false},
+      {icon:"🎉", text:"30 Juin : Fin année universitaire", canReserve:false}
     ],
     "🚌 Campus Shuttle": [
-      {icon:"🚏", text:"Ligne A : Résidence Est ↔ Bâtiment Sciences (toutes les 10min)"},
-      {icon:"🚏", text:"Ligne B : Parking Sud ↔ Bibliothèque Centrale"},
-      {icon:"🚏", text:"Ligne C : Résidence Ouest ↔ Resto Universitaire"},
-      {icon:"🕒", text:"Horaires semaine : 06:45 → 22:30"},
-      {icon:"🕒", text:"Samedi : 08:00 → 19:00 (toutes les 20min)"},
-      {icon:"🕒", text:"Dimanche & jours fériés : service réduit 1 bus/h"},
-      {icon:"📍", text:"Arrêt principal : Place de l'Université (toutes lignes passent)"},
-      {icon:"📱", text:"Tracking temps réel disponible sur l'app campus"},
-      {icon:"♿", text:"Tous les bus accessibles PMR, rampes intégrées"},
-      {icon:"💶", text:"Gratuit pour étudiants avec carte étudiante valide"}
+      {icon:"🚏", text:"Ligne A : Résidence Est ↔ Bâtiment Sciences (toutes les 10min)", canReserve:true},
+      {icon:"🚏", text:"Ligne B : Parking Sud ↔ Bibliothèque Centrale", canReserve:true},
+      {icon:"🚏", text:"Ligne C : Résidence Ouest ↔ Resto Universitaire", canReserve:true},
+      {icon:"🕒", text:"Horaires semaine : 06:45 → 22:30", canReserve:false},
+      {icon:"🕒", text:"Samedi : 08:00 → 19:00 (toutes les 20min)", canReserve:false},
+      {icon:"🕒", text:"Dimanche & jours fériés : service réduit 1 bus/h", canReserve:false},
+      {icon:"📍", text:"Arrêt principal : Place de l'Université (toutes lignes passent)", canReserve:false},
+      {icon:"📱", text:"Tracking temps réel disponible sur l'app campus", canReserve:false},
+      {icon:"♿", text:"Tous les bus accessibles PMR, rampes intégrées", canReserve:false},
+      {icon:"💶", text:"Gratuit pour étudiants avec carte étudiante valide", canReserve:false}
     ],
     "📄 Registrar Forms": [
-      {icon:"📜", text:"Demande relevé de notes officiel (transcript)"},
-      {icon:"✅", text:"Certificat de scolarité / attestation d'inscription"},
-      {icon:"📝", text:"Demande changement de filière / spécialité"},
-      {icon:"📄", text:"Demande validation crédits ECTS échange ERASMUS"},
-      {icon:"🗓️", text:"Demande report d'examen pour motif médical"},
-      {icon:"📋", text:"Formulaire annulation inscription semestre"},
-      {icon:"🏫", text:"Attestation de diplomation provisoire"},
-      {icon:"✉️", text:"Demande duplicata carte étudiante perdue"},
-      {icon:"📂", text:"Demande consultation dossier étudiant administratif"},
-      {icon:"⚖️", text:"Recours contre décision jury d'examen"}
+      {icon:"📜", text:"Demande relevé de notes officiel (transcript)", canReserve:false},
+      {icon:"✅", text:"Certificat de scolarité / attestation d'inscription", canReserve:false},
+      {icon:"📝", text:"Demande changement de filière / spécialité", canReserve:false},
+      {icon:"📄", text:"Demande validation crédits ECTS échange ERASMUS", canReserve:false},
+      {icon:"🗓️", text:"Demande report d'examen pour motif médical", canReserve:false},
+      {icon:"📋", text:"Formulaire annulation inscription semestre", canReserve:false},
+      {icon:"🏫", text:"Attestation de diplomation provisoire", canReserve:false},
+      {icon:"✉️", text:"Demande duplicata carte étudiante perdue", canReserve:false},
+      {icon:"📂", text:"Demande consultation dossier étudiant administratif", canReserve:false},
+      {icon:"⚖️", text:"Recours contre décision jury d'examen", canReserve:false}
     ],
     "💳 Financial Aid Hub": [
-      {icon:"💸", text:"Demande bourse sur critères sociaux (BCS)"},
-      {icon:"🎓", text:"Bourse mérite pour étudiants à haut classement"},
-      {icon:"🏠", text:"Aide logement étudiant APL"},
-      {icon:"💳", text:"Échelonnement paiement frais scolarité en 3 fois"},
-      {icon:"💵", text:"Aide alimentaire urgente (resto U gratuit)"},
-      {icon:"📊", text:"Suivi en temps réel traitement dossier bourse"},
-      {icon:"🧾", text:"Télécharger avis de versement mensuel bourse"},
-      {icon:"🏦", text:"Demande prêt étudiant taux réduit banque partenaire"},
-      {icon:"📩", text:"Réclamation retard virement aide financière"},
-      {icon:"💼", text:"Aides stage rémunéré pour étudiants précaires"}
+      {icon:"💸", text:"Demande bourse sur critères sociaux (BCS)", canReserve:false},
+      {icon:"🎓", text:"Bourse mérite pour étudiants à haut classement", canReserve:false},
+      {icon:"🏠", text:"Aide logement étudiant APL", canReserve:false},
+      {icon:"💳", text:"Échelonnement paiement frais scolarité en 3 fois", canReserve:false},
+      {icon:"💵", text:"Aide alimentaire urgente (resto U gratuit)", canReserve:false},
+      {icon:"📊", text:"Suivi en temps réel traitement dossier bourse", canReserve:false},
+      {icon:"🧾", text:"Télécharger avis de versement mensuel bourse", canReserve:false},
+      {icon:"🏦", text:"Demande prêt étudiant taux réduit banque partenaire", canReserve:false},
+      {icon:"📩", text:"Réclamation retard virement aide financière", canReserve:false},
+      {icon:"💼", text:"Aides stage rémunéré pour étudiants précaires", canReserve:false}
     ],
     "🖥️ IT Support Desk": [
-      {icon:"📶", text:"Activation connexion Wi-Fi campus eduroam"},
-      {icon:"💻", text:"Installation pack Office 365 étudiant gratuit"},
-      {icon:"🔑", text:"Réinitialisation mot de passe compte universitaire"},
-      {icon:"🖨️", text:"Accès imprimantes campus & crédits impression"},
-      {icon:"📧", text:"Configuration mail étudiant sur téléphone/ordinateur"},
-      {icon:"🛠️", text:"Dépannage matériel ordinateur portable étudiant"},
-      {icon:"☁️", text:"Stockage cloud 1To OneDrive offert aux inscrits"},
-      {icon:"🔒", text:"Aide connexion VPN accès ressources bibliothèque distante"},
-      {icon:"📱", text:"Installation application mobile services campus"},
-      {icon:"🎓", text:"Formation logiciels statistiques (SPSS, R, Python) gratuite"}
+      {icon:"📶", text:"Activation connexion Wi-Fi campus eduroam", canReserve:false},
+      {icon:"💻", text:"Installation pack Office 365 étudiant gratuit", canReserve:false},
+      {icon:"🔑", text:"Réinitialisation mot de passe compte universitaire", canReserve:false},
+      {icon:"🖨️", text:"Accès imprimantes campus & crédits impression", canReserve:true},
+      {icon:"📧", text:"Configuration mail étudiant sur téléphone/ordinateur", canReserve:false},
+      {icon:"🛠️", text:"Dépannage matériel ordinateur portable étudiant", canReserve:true},
+      {icon:"☁️", text:"Stockage cloud 1To OneDrive offert aux inscrits", canReserve:false},
+      {icon:"🔒", text:"Aide connexion VPN accès ressources bibliothèque distante", canReserve:false},
+      {icon:"📱", text:"Installation application mobile services campus", canReserve:false},
+      {icon:"🎓", text:"Formation logiciels statistiques (SPSS, R, Python) gratuite", canReserve:false}
     ]
   };
+
+  // Stockage Local
+  const FAV_KEY = "campus_favorites";
+  const RESERVE_KEY = "campus_reservations";
+  let favoritesIds = JSON.parse(localStorage.getItem(FAV_KEY)) || [];
+  let reservations = JSON.parse(localStorage.getItem(RESERVE_KEY)) || [];
+
+  // 2. Message bienvenue dynamique selon l'heure
+  function setWelcomeMessage() {
+    const heure = new Date().getHours();
+    let msg = "";
+    if (heure >= 5 && heure < 12) msg = "Bonjour, voici vos services campus essentiels";
+    else if (heure >= 12 && heure < 18) msg = "Bon après-midi, accédez rapidement à tous vos outils";
+    else msg = "Bonsoir, consultez vos services du campus";
+    document.getElementById("welcomeMsg").textContent = msg;
+  }
+
+  // Mode sombre
+  const themeBtn = document.getElementById("themeBtn");
+  if(localStorage.getItem("darkMode") === "true") document.body.classList.add("dark");
+  themeBtn.addEventListener("click", ()=>{
+    document.body.classList.toggle("dark");
+    localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+  });
 
   // MODALE GESTION
   const modalOverlay = document.getElementById("serviceModal");
   const modalTitleEl = document.getElementById("modalTitle");
   const modalContentEl = document.getElementById("modalContent");
   const modalCloseBtn = document.getElementById("modalCloseBtn");
+  const modalSearchInput = document.getElementById("modalSearchInput");
+  const priceFilterSelect = document.getElementById("priceFilterSelect");
 
   function openServiceModal(serviceName) {
     const items = MODAL_CONTENTS[serviceName];
     if (!items) return;
     modalTitleEl.textContent = serviceName;
-    // Générer ligne avec prix si existant
-    modalContentEl.innerHTML = items.map(item => {
+    // Afficher filtre prix uniquement pour cantine
+    if(serviceName === "🍽️ Dining Menu") priceFilterSelect.style.display = "block";
+    else priceFilterSelect.style.display = "none";
+    modalSearchInput.value = "";
+    priceFilterSelect.value = "all";
+    renderModalList(items, serviceName);
+    modalOverlay.style.display = "flex";
+  }
+
+  function renderModalList(allItems, serviceName, searchTxt="", priceFilter="all") {
+    let filtered = allItems.filter(el => el.text.toLowerCase().includes(searchTxt.toLowerCase()));
+    // Filtre prix cantine
+    if(serviceName === "🍽️ Dining Menu" && priceFilter !== "all") {
+      if(priceFilter === "low") filtered = filtered.filter(x => x.priceNum <4);
+      if(priceFilter === "mid") filtered = filtered.filter(x => x.priceNum >=4 && x.priceNum <=6);
+      if(priceFilter === "high") filtered = filtered.filter(x => x.priceNum >6);
+    }
+    if(filtered.length === 0) {
+      modalContentEl.innerHTML = `<div class="empty-state">Aucun résultat trouvé</div>`;
+      return;
+    }
+    modalContentEl.innerHTML = filtered.map(item => {
       let priceHtml = item.price ? `<span class="item-price">${item.price}</span>` : "";
+      let reserveBtn = item.canReserve ? `<button class="reserve-btn" data-service="${serviceName}" data-text="${item.text}">Réserver</button>` : "";
       return `
         <div class="list-item">
           <span class="item-icon">${item.icon}</span>
           <span>${item.text}</span>
           ${priceHtml}
+          ${reserveBtn}
         </div>
       `;
     }).join("");
-    modalOverlay.style.display = "flex";
+    // Event bouton réserver
+    document.querySelectorAll(".reserve-btn").forEach(btn => {
+      btn.onclick = () => {
+        const nomService = btn.dataset.service;
+        const texteItem = btn.dataset.text;
+        addReservation(nomService, texteItem);
+      }
+    });
   }
+
+  // Filtre modale en temps réel
+  modalSearchInput.addEventListener("input", ()=>{
+    const liste = MODAL_CONTENTS[modalTitleEl.textContent];
+    renderModalList(liste, modalTitleEl.textContent, modalSearchInput.value, priceFilterSelect.value);
+  });
+  priceFilterSelect.addEventListener("change", ()=>{
+    const liste = MODAL_CONTENTS[modalTitleEl.textContent];
+    renderModalList(liste, modalTitleEl.textContent, modalSearchInput.value, priceFilterSelect.value);
+  });
+
   function closeServiceModal() {
     modalOverlay.style.display = "none";
   }
@@ -642,23 +799,58 @@ body.dark .empty-state {
     if(e.target === modalOverlay) closeServiceModal();
   });
 
-  // ---------- STORAGE KEYS ----------
-  const FAV_KEY = "campus_favorites";
-
-  // load favorites from localStorage (array of service ids)
-  let favoritesIds = JSON.parse(localStorage.getItem(FAV_KEY)) || [];
-
-  // helper: save favorites to localStorage
-  function persistFavorites() {
-    localStorage.setItem(FAV_KEY, JSON.stringify(favoritesIds));
+  // Gestion Réservations
+  function persistReservations() {
+    localStorage.setItem(RESERVE_KEY, JSON.stringify(reservations));
+    refreshCurrentPage();
+  }
+  function addReservation(service, itemText) {
+    const existe = reservations.some(r => r.service === service && r.item === itemText);
+    if(existe) return alert("Cette réservation existe déjà !");
+    reservations.push({
+      service: service,
+      item: itemText,
+      date: new Date().toLocaleString()
+    });
+    persistReservations();
+    alert("Réservation enregistrée ! Allez sur la page Mes Réservations pour la consulter.");
+  }
+  function deleteReservation(index) {
+    reservations.splice(index, 1);
+    persistReservations();
+  }
+  function renderReservationsPage() {
+    const container = document.getElementById("reservationsList");
+    if(reservations.length === 0) {
+      container.innerHTML = `<div class="empty-state">Aucune réservation pour l'instant. Ouvrez Bibliothèque, Cantine ou Navette et cliquez sur Réserver.</div>`;
+      return;
+    }
+    container.innerHTML = reservations.map((res, idx) => `
+      <div class="reservation-card">
+        <div>
+          <strong>${res.service}</strong>
+          <p>${res.item}</p>
+          <small>Réservé le : ${res.date}</small>
+        </div>
+        <button class="reserve-delete" data-idx="${idx}">Supprimer</button>
+      </div>
+    `).join("");
+    document.querySelectorAll(".reserve-delete").forEach(btn => {
+      btn.onclick = () => deleteReservation(parseInt(btn.dataset.idx));
+    });
   }
 
-  // favorite helpers
+  // ---------- STORAGE FAVORIS ----------
+  function persistFavorites() {
+    localStorage.setItem(FAV_KEY, JSON.stringify(favoritesIds));
+    updateFavCount();
+  }
+  function updateFavCount(){
+    document.getElementById("favCount").textContent = `Services enregistrés : ${favoritesIds.length}`;
+  }
   function isFavorite(id) {
     return favoritesIds.includes(id);
   }
-
-  // toggle with confirm prompt (alert/confirm based on requirement)
   function toggleFavoriteWithConfirm(serviceId, serviceName) {
     const alreadyFav = isFavorite(serviceId);
     let userConfirmed = false;
@@ -678,13 +870,11 @@ body.dark .empty-state {
       }
     }
     if (userConfirmed) {
-      // re-render current page to reflect star changes
       refreshCurrentPage();
     }
     return userConfirmed;
   }
 
-  // batch removal: multi-select deletion (advanced requirement)
   function batchRemoveFavorites(selectedIds) {
     if (selectedIds.length === 0) {
       alert("No services selected.");
@@ -701,13 +891,11 @@ body.dark .empty-state {
   }
 
   // ---------- GLOBAL SEARCH & PAGE STATE ----------
-  let currentPage = "home";          // home, categories, favorites
-  let activeTag = "All";             // for categories page
+  let currentPage = "home";
+  let activeTag = "All";
   let searchQuery = "";
-
   const searchInput = document.getElementById("globalSearch");
 
-  // render functions based on search, tag, etc.
   function filterServicesBySearch(services) {
     if (!searchQuery.trim()) return services;
     const q = searchQuery.trim().toLowerCase();
@@ -717,12 +905,10 @@ body.dark .empty-state {
     );
   }
 
-  // get filtered list for home page (all services + search)
   function getFilteredHomeServices() {
     return filterServicesBySearch([...SERVICES]);
   }
 
-  // get filtered list for categories page (tag + search)
   function getFilteredCategoryServices() {
     let filtered = [...SERVICES];
     if (activeTag !== "All") {
@@ -731,13 +917,10 @@ body.dark .empty-state {
     return filterServicesBySearch(filtered);
   }
 
-  // generate card HTML (reusable)
   function generateCardHTML(service, showCheckbox = false, isChecked = false) {
     const starIcon = isFavorite(service.id) ? "★" : "☆";
     const starColor = isFavorite(service.id) ? "#f5b042" : "#9aaebf";
     const checkboxHtml = showCheckbox ? `<input type="checkbox" class="checkbox-select" data-id="${service.id}" ${isChecked ? "checked" : ""}>` : "";
-    
-    // Tous les liens ouvrent la modale interne maintenant
     let linkHtml = `<span class="card-link open-modal-link" data-service-name="${service.name}">🔗 Open official service →</span>`;
 
     return `
@@ -756,7 +939,6 @@ body.dark .empty-state {
     `;
   }
 
-  // Render HOME page (cards with star and hover, external link)
   function renderHome() {
     const container = document.getElementById("homeCardsGrid");
     const servicesList = getFilteredHomeServices();
@@ -769,7 +951,6 @@ body.dark .empty-state {
     attachModalLinkEvents();
   }
 
-  // Render CATEGORIES page (based on tag filter + search)
   function renderCategories() {
     const container = document.getElementById("categoryCardsGrid");
     const filtered = getFilteredCategoryServices();
@@ -782,7 +963,6 @@ body.dark .empty-state {
     attachModalLinkEvents();
   }
 
-  // Render FAVORITES page with checkboxes + batch removal support
   function renderFavorites() {
     const container = document.getElementById("favoritesGrid");
     const favoriteServices = SERVICES.filter(svc => favoritesIds.includes(svc.id));
@@ -790,14 +970,12 @@ body.dark .empty-state {
       container.innerHTML = `<div class="empty-state">⭐ No favorites added yet. Go to Home or Categories and click the star ☆ to save services.</div>`;
       return;
     }
-    // generate cards with checkbox for each
     container.innerHTML = favoriteServices.map(service => generateCardHTML(service, true, false)).join("");
     attachStarEvents();
     attachModalLinkEvents();
     attachCheckboxEventsForBatch();
   }
 
-  // Lien ouverture modale
   function attachModalLinkEvents() {
     document.querySelectorAll(".open-modal-link").forEach(el=>{
       el.onclick = ()=>{
@@ -807,14 +985,12 @@ body.dark .empty-state {
     })
   }
 
-  // global star events (toggle favorites)
   function attachStarEvents() {
     document.querySelectorAll(".star-btn").forEach(btn => {
       btn.removeEventListener("click", starClickHandler);
       btn.addEventListener("click", starClickHandler);
     });
   }
-
   function starClickHandler(e) {
     e.stopPropagation();
     const id = parseInt(this.getAttribute("data-id"));
@@ -822,33 +998,25 @@ body.dark .empty-state {
     toggleFavoriteWithConfirm(id, name);
   }
 
-  // for batch removal: update checkboxes selection state
   let selectedFavIdsForRemoval = new Set();
-
   function attachCheckboxEventsForBatch() {
     const checkboxes = document.querySelectorAll("#favoritesGrid .checkbox-select");
     checkboxes.forEach(cb => {
       cb.removeEventListener("change", checkboxChangeHandler);
       cb.addEventListener("change", checkboxChangeHandler);
     });
-    // sync set with initial checked states
     selectedFavIdsForRemoval.clear();
     checkboxes.forEach(cb => {
       const id = parseInt(cb.getAttribute("data-id"));
       if (cb.checked) selectedFavIdsForRemoval.add(id);
     });
   }
-
   function checkboxChangeHandler(e) {
     const id = parseInt(e.target.getAttribute("data-id"));
-    if (e.target.checked) {
-      selectedFavIdsForRemoval.add(id);
-    } else {
-      selectedFavIdsForRemoval.delete(id);
-    }
+    if (e.target.checked) selectedFavIdsForRemoval.add(id);
+    else selectedFavIdsForRemoval.delete(id);
   }
 
-  // batch removal button logic
   function setupBatchRemoval() {
     const batchBtn = document.getElementById("batchRemoveBtn");
     if (batchBtn) {
@@ -866,51 +1034,40 @@ body.dark .empty-state {
     }
   }
 
-  // ---------- PAGE NAVIGATION SMOOTH ----------
   function showPage(pageId) {
     document.querySelectorAll(".page").forEach(page => {
         page.classList.remove("active-page");
     });
     document.getElementById(`${pageId}Page`).classList.add("active-page");
-    
-    // update active nav style
     document.querySelectorAll(".nav-btn").forEach(btn => {
-      if (btn.getAttribute("data-page") === pageId) {
-        btn.classList.add("active");
-      } else {
-        btn.classList.remove("active");
-      }
+      if (btn.getAttribute("data-page") === pageId) btn.classList.add("active");
+      else btn.classList.remove("active");
     });
-    
     currentPage = pageId;
     refreshCurrentPage();
   }
 
   function refreshCurrentPage() {
-    if (currentPage === "home") {
-      renderHome();
-    } else if (currentPage === "categories") {
+    if (currentPage === "home") renderHome();
+    else if (currentPage === "categories") {
       renderCategories();
       highlightActiveTag();
-    } else if (currentPage === "favorites") {
+    }
+    else if (currentPage === "favorites") {
       renderFavorites();
       setupBatchRemoval();
     }
+    else if (currentPage === "reservations") renderReservationsPage();
   }
 
-  // highlight current tag in categories view
   function highlightActiveTag() {
     document.querySelectorAll(".tag-btn").forEach(btn => {
       const tagVal = btn.getAttribute("data-tag");
-      if (tagVal === activeTag) {
-        btn.classList.add("active-tag");
-      } else {
-        btn.classList.remove("active-tag");
-      }
+      if (tagVal === activeTag) btn.classList.add("active-tag");
+      else btn.classList.remove("active-tag");
     });
   }
 
-  // tag event listeners
   function initTagFilters() {
     const tagBtns = document.querySelectorAll(".tag-btn");
     tagBtns.forEach(btn => {
@@ -922,37 +1079,15 @@ body.dark .empty-state {
     });
   }
 
-  // search realtime listener
   function initSearch() {
     searchInput.addEventListener("input", (e) => {
       searchQuery = e.target.value;
       if (currentPage === "home") renderHome();
       else if (currentPage === "categories") renderCategories();
-      else if (currentPage === "favorites") {
-        const favServices = SERVICES.filter(svc => favoritesIds.includes(svc.id));
-        const filteredFavs = favServices.filter(svc => 
-          svc.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          svc.description.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-        const container = document.getElementById("favoritesGrid");
-        if (filteredFavs.length === 0 && favoritesIds.length > 0) {
-          container.innerHTML = `<div class="empty-state">🔎 No favorite matches "${searchQuery}".</div>`;
-        } else if (filteredFavs.length === 0 && favoritesIds.length === 0) {
-          container.innerHTML = `<div class="empty-state">⭐ No favorites added yet.</div>`;
-        } else {
-          container.innerHTML = filteredFavs.map(service => generateCardHTML(service, true, false)).join("");
-          attachStarEvents();
-          attachModalLinkEvents();
-          attachCheckboxEventsForBatch();
-          setupBatchRemoval(); 
-        }
-        return;
-      }
+      else if (currentPage === "favorites") renderFavorites();
     });
   }
-
-  // navigation smooth + localStorage ready
-  function initNavigation() {
+  function initNavBar() {
     document.querySelectorAll(".nav-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const page = btn.getAttribute("data-page");
@@ -960,35 +1095,13 @@ body.dark .empty-state {
       });
     });
   }
-
-  // initial load and storage sync across pages
-  function init() {
-    initNavigation();
-    initTagFilters();
-    initSearch();
-    showPage("home");
-    window.addEventListener("storage", (e) => {
-      if (e.key === FAV_KEY) {
-        favoritesIds = JSON.parse(localStorage.getItem(FAV_KEY)) || [];
-        refreshCurrentPage();
-      }
-    });
-  }
-
-  init();
-  function updateFavCount(){
-  document.getElementById("favCount").textContent = `Services enregistrés : ${favoritesIds.length}`;
-};
-  // update count on load and whenever favorites change
-  updateFavCount();
-  const originalToggleFavoriteWithConfirm = toggleFavoriteWithConfirm;
-  toggleFavoriteWithConfirm = function(serviceId, serviceName) {
-    const result = originalToggleFavoriteWithConfirm(serviceId, serviceName);
-    if (result) {
-      updateFavCount();
-    }
-    return result;
-  };
+  // Initialisation
+  setWelcomeMessage();
+  initNavBar();
+  initTagFilters();
+  initSearch();
+  initFavorites();
+  showPage("home");
 </script>
 </body>
 </html>
